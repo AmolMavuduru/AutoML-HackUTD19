@@ -14,7 +14,7 @@ class AutoMLEstimator(object):
         self.task = kwargs['task']
         self.speed = kwargs['speed']
         self.test_size = kwargs['test_size']
-        if self.task == 'classification':
+        if self.task == 'Classification':
             self.tpot_model = TPOTClassifier(generations=self.speed, population_size=self.speed*10, verbosity=2, n_jobs=-1)
         else:
             self.tpot_model = TPOTRegressor(generations=self.speed, population_size=self.speed*10, verbosity=2, n_jobs=-1)
@@ -46,16 +46,19 @@ class AutoMLEstimator(object):
         metrics = defaultdict()
         pred = self.tpot_model.fitted_pipeline_.predict(self.X_test)
         
-        if self.task == 'classification':
+        if self.task == 'Classification':
             
-            metrics['accuracy'] = accuracy_score(pred, self.y_test)
-            metrics['precision'] = precision_score(pred, self.y_test)
-            metrics['recall'] = recall_score(pred, self.y_test)
+            metrics['task'] = 'Classification'
+            metrics['accuracy'] = int(100*accuracy_score(pred, self.y_test))
+            metrics['precision'] = int(100*precision_score(pred, self.y_test))
+            metrics['recall'] = int(100*recall_score(pred, self.y_test))
             
         else:
             
+            metrics['task'] = 'Regression'
             metrics['r2_score'] = r2_score(pred, self.y_test)
             metrics['mean_absolute_error'] = mean_absolute_error(pred, self.y_test)
             metrics['mean_squared_error'] = mean_squared_error(pred, self.y_test)
         
+        metrics['model_name'] = type(self.tpot_model.fitted_pipeline_[-1]).__name__
         return metrics
