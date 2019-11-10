@@ -6,6 +6,20 @@ models.
 
 This app was built using Flask and the Python TPOT library.
 
+## Features
+
+### Automatically Optimize ML Pipelines For a Dataset
+
+[!Screenshot](./images/options_menu.png)
+
+### Obtain Results and Download the Best Model
+
+[!Screenshot](./images/metrics.png)
+
+### Visualize the Feature Importances
+
+[!Screenshot](./images/feat_importances.png)
+
 ## Software Prerequisites
 
 This app makes use of the following frameworks and libraries:
@@ -20,7 +34,7 @@ This app makes use of the following frameworks and libraries:
 - Flask
 - werkzeug
 
-## How to run this app
+## How to run this app locally
 
 Navigate to the root directory of the project and run the command **flask run**.
 Open up a browser and navigate to the address on localhost where the app is running in your terminal.
