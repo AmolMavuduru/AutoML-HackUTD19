@@ -10,15 +10,15 @@ This app was built using Flask and the Python TPOT library.
 
 ### Automatically Optimize ML Pipelines For a Dataset
 
-[!Screenshot](./images/options_menu.png)
+![Screenshot](./images/options_menu.png)
 
 ### Obtain Results and Download the Best Model
 
-[!Screenshot](./images/metrics.png)
+![Screenshot](./images/metrics.png)
 
 ### Visualize the Feature Importances
 
-[!Screenshot](./images/feat_importances.png)
+![Screenshot](./images/feat_importances.png)
 
 ## Software Prerequisites
 
