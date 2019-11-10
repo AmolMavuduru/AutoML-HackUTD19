@@ -5,12 +5,14 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import *
 from tpot import TPOTClassifier, TPOTRegressor
 from datacleaner import autoclean
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 from joblib import dump, load
 import os
 import io
 import base64
-from yellowbrick.model_selection import FeatureImportances
+import operator
+from xgboost import XGBRegressor, XGBClassifier
+import matplotlib.pyplot as plt
 
 class AutoMLEstimator(object):
     
@@ -46,6 +48,29 @@ class AutoMLEstimator(object):
         self.split_data(self.X, self.y)
         self.fit_model()
 
+    def get_feature_importances(self):
+    
+	    img = io.BytesIO()
+
+	    if self.task == 'Classification':
+	    	model = XGBClassifier()
+	    else:
+	    	model = XGBRegressor()
+
+	    model.fit(self.X, self.y)
+	    importances = model.feature_importances_
+
+	    feature_names = list(self.X.columns)
+	    feat_importances = dict(zip(feature_names, importances))
+	    feat_importances = OrderedDict(sorted(feat_importances.items(), key=operator.itemgetter(1)))
+	    plt.xticks(range(len(feat_importances)), list(feat_importances.keys()))
+	    plt.bar(range(len(feat_importances)), list(feat_importances.values()), align='center')
+	    plt.savefig(img, format='png')
+	    img.seek(0)
+	    graph_url = base64.b64encode(img.getvalue()).decode()
+	    plt.close()
+	    return 'data:image/png;base64,{}'.format(graph_url)
+
     
     def evaluate_model(self):
         
@@ -67,7 +92,7 @@ class AutoMLEstimator(object):
             metrics['mean_squared_error'] = mean_squared_error(pred, self.y_test)
         
         metrics['model_name'] = type(self.tpot_model.fitted_pipeline_[-1]).__name__
-
+        metrics['feat_importances'] = self.get_feature_importances()
         return metrics
 
     def save_model(self, directory):

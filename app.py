@@ -83,3 +83,7 @@ def trainModel():
 		return send_from_directory(directory=app.config['UPLOAD_FOLDER'], filename=filename, as_attachment=True)
 
 	return render_template('main_page.html', metrics=None)
+
+
+if __name__ == '__main__':
+	app.run(debug=True)
