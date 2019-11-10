@@ -21,6 +21,7 @@ test_size = 0.2
 target = None
 metrics = None
 
+
 global AutoML_Engine
 
 def allowed_file(filename):
@@ -55,6 +56,10 @@ def trainModel():
 	global AutoML_Engine
 	print('Running train model function')
 	print(request)
+
+
+	if not os.path.exists(UPLOAD_FOLDER):
+		os.makedirs(UPLOAD_FOLDER)
 
 	if request.method == 'POST' and 'file' in request.files and request.files['file']:
 		file = request.files['file']
