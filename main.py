@@ -6,7 +6,7 @@ import pandas as pd
 from collections import defaultdict
 from AutoML import *
 
-UPLOAD_FOLDER = './uploads'
+UPLOAD_FOLDER = '/tmp/uploads'
 MAX_FILE_SIZE_MB = 1000
 ALLOWED_EXTENSIONS = set(['txt', 'csv', 'xlsx'])
 
