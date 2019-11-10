@@ -12,6 +12,7 @@ import io
 import base64
 import operator
 from xgboost import XGBRegressor, XGBClassifier
+from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 import matplotlib.pyplot as plt
 
 class AutoMLEstimator(object):
@@ -20,15 +21,25 @@ class AutoMLEstimator(object):
 
         self.task = kwargs['task']
         self.speed = kwargs['speed']
+        self.max_eval_time = 3*self.speed/2
         self.test_size = kwargs['test_size']
         if self.task == 'Classification':
-            self.tpot_model = TPOTClassifier(generations=self.speed, population_size=self.speed*5, verbosity=2, n_jobs=-1)
+            self.tpot_model = TPOTClassifier(generations=self.speed, population_size=self.speed*5, 
+                verbosity=2, n_jobs=-1, max_eval_time_mins=self.max_eval_time)
         else:
-            self.tpot_model = TPOTRegressor(generations=self.speed, population_size=self.speed*5, verbosity=2, n_jobs=-1)
+            self.tpot_model = TPOTRegressor(generations=self.speed, population_size=self.speed*5, 
+                verbosity=2, n_jobs=-1, max_eval_time_mins=self.max_eval_time)
 
+    def remove_unnamed_columns(self, data):
+
+        columns = list(data.columns)
+        unnamed_cols = [col for col in columns if 'Unnamed' in col]
+        return data.drop(unnamed_cols, axis=1)
+        
     def preprocess_data(self, data, target_column):
 
         clean_data = autoclean(data)
+        clean_data = self.remove_unnamed_columns(clean_data)
         X = clean_data.drop(target_column, axis=1)
         y = clean_data[target_column]
 
@@ -53,9 +64,9 @@ class AutoMLEstimator(object):
 	    img = io.BytesIO()
 
 	    if self.task == 'Classification':
-	    	model = XGBClassifier()
+	    	model = XGBClassifier(n_jobs=-1)
 	    else:
-	    	model = XGBRegressor()
+	    	model = XGBRegressor(n_jobs=-1)
 
 	    model.fit(self.X, self.y)
 	    importances = model.feature_importances_
