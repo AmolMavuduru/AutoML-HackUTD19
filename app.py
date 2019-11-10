@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, flash
+from flask import Flask, render_template, request, redirect, flash, send_from_directory
 from flask_bootstrap import Bootstrap
 import os
 from werkzeug.utils import secure_filename
@@ -21,7 +21,7 @@ test_size = 0.2
 target = None
 metrics = None
 
-AutoML_Engine = AutoMLEstimator(task=task, speed=speed, test_size=test_size)
+global AutoML_Engine
 
 def allowed_file(filename):
 
@@ -52,9 +52,11 @@ def scale_speed(speed):
 
 @app.route('/', methods=['GET', 'POST'])
 def trainModel():
+	global AutoML_Engine
 	print('Running train model function')
 	print(request)
-	if request.method == 'POST' and 'file' in request.files:
+
+	if request.method == 'POST' and 'file' in request.files and request.files['file']:
 		file = request.files['file']
 
 		if file and allowed_file(file.filename):
@@ -73,5 +75,11 @@ def trainModel():
 			metrics = AutoML_Engine.evaluate_model()
 
 		return render_template('main_page.html', metrics=metrics)
+
+	elif 'download' in request.form:
+
+		AutoML_Engine.save_model(directory=app.config['UPLOAD_FOLDER'])
+		filename = '{}.joblib'.format(AutoML_Engine.model_name)
+		return send_from_directory(directory=app.config['UPLOAD_FOLDER'], filename=filename, as_attachment=True)
 
 	return render_template('main_page.html', metrics=None)

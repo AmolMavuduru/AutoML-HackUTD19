@@ -6,6 +6,11 @@ from sklearn.metrics import *
 from tpot import TPOTClassifier, TPOTRegressor
 from datacleaner import autoclean
 from collections import defaultdict
+from joblib import dump, load
+import os
+import io
+import base64
+from yellowbrick.model_selection import FeatureImportances
 
 class AutoMLEstimator(object):
     
@@ -15,9 +20,9 @@ class AutoMLEstimator(object):
         self.speed = kwargs['speed']
         self.test_size = kwargs['test_size']
         if self.task == 'Classification':
-            self.tpot_model = TPOTClassifier(generations=self.speed, population_size=self.speed*10, verbosity=2, n_jobs=-1)
+            self.tpot_model = TPOTClassifier(generations=self.speed, population_size=self.speed*5, verbosity=2, n_jobs=-1)
         else:
-            self.tpot_model = TPOTRegressor(generations=self.speed, population_size=self.speed*10, verbosity=2, n_jobs=-1)
+            self.tpot_model = TPOTRegressor(generations=self.speed, population_size=self.speed*5, verbosity=2, n_jobs=-1)
         
     def preprocess_data(self, data, target_column):
         
@@ -40,6 +45,16 @@ class AutoMLEstimator(object):
         self.X, self.y = self.preprocess_data(data, target_column)
         self.split_data(self.X, self.y)
         self.fit_model()
+
+
+    def visualize_model(self):
+
+    	img = io.BytesIO()
+    	best_model = self.tpot_model.fitted_pipeline_[-1][1]
+    	viz = FeatureImportances(best_model, is_fitted=False)
+    	viz.fit(self.X, self.y)
+    	
+
     
     def evaluate_model(self):
         
@@ -50,8 +65,8 @@ class AutoMLEstimator(object):
             
             metrics['task'] = 'Classification'
             metrics['accuracy'] = int(100*accuracy_score(pred, self.y_test))
-            metrics['precision'] = int(100*precision_score(pred, self.y_test))
-            metrics['recall'] = int(100*recall_score(pred, self.y_test))
+            metrics['precision'] = int(100*precision_score(pred, self.y_test, average="weighted"))
+            metrics['recall'] = int(100*recall_score(pred, self.y_test, average="weighted"))
             
         else:
             
@@ -61,4 +76,14 @@ class AutoMLEstimator(object):
             metrics['mean_squared_error'] = mean_squared_error(pred, self.y_test)
         
         metrics['model_name'] = type(self.tpot_model.fitted_pipeline_[-1]).__name__
+
+
         return metrics
+
+    def save_model(self, directory):
+
+    	model_pipeline = self.tpot_model.fitted_pipeline_
+    	self.model_name = type(model_pipeline[-1]).__name__
+    	dump(model_pipeline, os.path.join(directory, './{}.joblib'.format(self.model_name)))
+
+

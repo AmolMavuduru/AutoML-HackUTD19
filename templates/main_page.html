@@ -56,25 +56,60 @@
 
 	{% if metrics is not none %}
 		<div class="jumbotron bg-white">
-  			<h2>{{ metrics['task'] }} Results</h2>
+  			<h2>{{ metrics['task'] }} Results </h2>
   			<br>
-  			<h3>Model Name: {{metrics['model_name']}}</h3>
-  			<br>
-  			<h3>Accuracy</h3>
-  			<div class="progress">
-  				<div class="progress-bar" name="accuracy" style="width:{{ metrics['accuracy'] }}%" role="progressbar" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"> {{metrics['accuracy']}} %</div>
-  			</div>
-  			<br>
-  			<h3>Precision</h3>
-  			<div class="progress">
-  				<div class="progress-bar" name="precision" style="width: {{ metrics['precision'] }}%" role="progressbar" aria-valuenow="{{ metrics['precision'] }}" aria-valuemin="0" aria-valuemax="100"> {{metrics['precision']}} %</div>
-  			</div>
-  			<br>
-  			<h3>Recall</h3>
-  			<div class="progress">
-  				<div class="progress-bar" name="recall" style="width: {{ metrics['recall'] }}%" role="progressbar" aria-valuenow="{{ metrics['recall'] }}" aria-valuemin="0" aria-valuemax="100"> {{metrics['recall']}} %</div>
-  			</div>
-  			<br>
+
+	  		<h3> Model Name: {{metrics['model_name']}} </h3>
+
+  			{% if metrics['task'] == 'Classification' %}
+	  			<h3>Accuracy</h3> 
+	  			<div class="progress">
+	  				<div class="progress-bar" name="accuracy" style="width:{{ metrics['accuracy'] }}%" role="progressbar" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"> {{metrics['accuracy']}}%</div>
+	  			</div>
+	  			<br>
+	  			<h3>Precision</h3>
+	  			<div class="progress">
+	  				<div class="progress-bar" name="precision" style="width: {{ metrics['precision'] }}%" role="progressbar" aria-valuenow="{{ metrics['precision'] }}" aria-valuemin="0" aria-valuemax="100"> {{metrics['precision']}} %</div>
+	  			</div>
+	  			<br>
+	  			<h3>Recall</h3>
+	  			<div class="progress">
+	  				<div class="progress-bar" name="recall" style="width: {{ metrics['recall'] }}%" role="progressbar" aria-valuenow="{{ metrics['recall'] }}" aria-valuemin="0" aria-valuemax="100"> {{metrics['recall']}} %</div>
+	  			</div>
+	  			<br>
+	  			<form method="POST" enctype=multipart/form-data>
+	  		 	 	<button type="submit" name="download" class="btn btn-primary"><i class="fa fa-download"></i> Download Model</button>
+	  		 	</form>
+	  		 {% else %}
+	  		 	<table class="table">
+	  		 		<thead>
+	  		 			<tr>
+	  		 				<th scope="col">Metric</th>
+	  		 				<th scope="col">Value</th>
+	  		 			</tr>
+	  		 		</thead>
+		  		 	<tbody>
+		  		 		<tr>
+		  		 			<th scope="row">R^2 Score</th>
+		  		 			<td>{{metrics['r2_score']}} </td> 
+		  				</tr>
+		  				<tr>
+		  					<th scope="row">Mean Absolute Error</th>
+		  					<td>{{metrics['mean_absolute_error']}}</td>
+		  				</tr>
+		  				<tr>
+		  					<th scope="row">Mean Squared Error</th>
+		  					<td>{{metrics['mean_squared_error']}}</td>
+		  				</tr>
+		  			</tbody>
+	  			</table>
+	  			<br>
+	  			<form method="POST" enctype=multipart/form-data>
+	  		 	 	<button type="submit" name="download" class="btn btn-primary"><i class="fa fa-download"></i> Download Model</button>
+	  		 	</form>
+	  		 {% endif %}
+	  		 <br>
+
   		</div>
 	{% endif %}
 
