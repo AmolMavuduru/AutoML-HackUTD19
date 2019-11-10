@@ -60,7 +60,7 @@ class AutoMLEstimator(object):
 	    model.fit(self.X, self.y)
 	    importances = model.feature_importances_
 
-	    plt.figure(figsize=(12, 6))
+	    plt.figure(figsize=(12s, 6))
 	    plt.title('Most Important Features')
 	    plt.xlabel('Feature')
 	    plt.ylabel('Importance')
