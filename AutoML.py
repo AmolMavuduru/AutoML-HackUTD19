@@ -60,9 +60,13 @@ class AutoMLEstimator(object):
 	    model.fit(self.X, self.y)
 	    importances = model.feature_importances_
 
+	    plt.figure(figsize=(10, 6))
+	    plt.title('Most Important Features')
+	    plt.xlabel('Feature')
+	    plt.ylabel('Importance')
 	    feature_names = list(self.X.columns)
 	    feat_importances = dict(zip(feature_names, importances))
-	    feat_importances = OrderedDict(sorted(feat_importances.items(), key=operator.itemgetter(1)))
+	    feat_importances = OrderedDict(sorted(feat_importances.items(), key=operator.itemgetter(1), reverse=True)[:5])
 	    plt.xticks(range(len(feat_importances)), list(feat_importances.keys()))
 	    plt.bar(range(len(feat_importances)), list(feat_importances.values()), align='center')
 	    plt.savefig(img, format='png')
