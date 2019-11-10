@@ -17,3 +17,5 @@ Notebooks/
 __pycache__/
 .mypy_cache/
 uploads/
+Pipfile
+Pipfile.lock
