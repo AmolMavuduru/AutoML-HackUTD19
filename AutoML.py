@@ -47,14 +47,18 @@ class AutoMLEstimator(object):
         self.fit_model()
 
 
-    def visualize_model(self):
+    def visualize_feature_importances(self):
 
     	img = io.BytesIO()
     	best_model = self.tpot_model.fitted_pipeline_[-1][1]
     	viz = FeatureImportances(best_model, is_fitted=False)
     	viz.fit(self.X, self.y)
-    	
-
+    	viz.show()
+    	plt.savefig(img, format='png')
+    	img.seek(0)
+    	graph_url = base64.b64encode(img.getvalue()).decode()
+    	plt.close()
+    	return 'data:image/png;base64,{}'.format(graph_url)
     
     def evaluate_model(self):
         
@@ -76,7 +80,7 @@ class AutoMLEstimator(object):
             metrics['mean_squared_error'] = mean_squared_error(pred, self.y_test)
         
         metrics['model_name'] = type(self.tpot_model.fitted_pipeline_[-1]).__name__
-
+        metrics['feat_importances'] = self.visualize_feature_importances()
 
         return metrics
 
