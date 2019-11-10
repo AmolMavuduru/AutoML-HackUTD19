@@ -1,0 +1,9 @@
+runtime: python36
+
+handlers:
+- url: /.*
+  script: app.py
+
+libraries:
+- name: flask
+  version: latest
