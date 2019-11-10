@@ -25,10 +25,10 @@ class AutoMLEstimator(object):
         self.test_size = kwargs['test_size']
         if self.task == 'Classification':
             self.tpot_model = TPOTClassifier(generations=self.speed, population_size=self.speed*5, 
-                verbosity=2, n_jobs=-1, max_eval_time_mins=self.max_eval_time)
+                verbosity=2, n_jobs=-1, max_eval_time_mins=self.max_eval_time, early_stop=1)
         else:
             self.tpot_model = TPOTRegressor(generations=self.speed, population_size=self.speed*5, 
-                verbosity=2, n_jobs=-1, max_eval_time_mins=self.max_eval_time)
+                verbosity=2, n_jobs=-1, max_eval_time_mins=self.max_eval_time, early_stop=1)
 
     def remove_unnamed_columns(self, data):
 
